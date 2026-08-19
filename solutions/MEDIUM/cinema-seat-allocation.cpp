@@ -1,60 +1,64 @@
 // Problem: Cinema Seat Allocation
 // Difficulty: MEDIUM
 // Link: https://leetcode.com/problems/cinema-seat-allocation/
-// Approach: Group reserved seats by row using a hash map. For each row, determine the maximum groups (0, 1, or 2, prioritizing disjoint blocks) it can accommodate based on seat availability. Unreserved rows each contribute two groups.
+// Approach: Group reserved seats by row using a hash map, representing seat reservations as a bitmask for efficient checking. For each row, prioritize two non-overlapping groups (2-5 and 6-9); if not possible, check for one group from any valid block (2-5, 4-7, or 6-9), summing these with two groups for all completely empty rows.
 
 class Solution {
 public:
     int maxNumberOfFamilies(int n, vector<vector<int>>& reservedSeats) {
-        map<int, int> rowReservations; 
+        map<int, int> row_occupied_mask; 
 
-        
-        for (const auto& seat : reservedSeats) {
-            int r = seat[0];
-            int s = seat[1];
+        for (const auto& seat_info : reservedSeats) {
+            int row = seat_info[0];
+            int seat = seat_info[1];
+
             
-            if (s >= 2 && s <= 9) {
+            if (seat >= 2 && seat <= 9) {
                 
                 
-                rowReservations[r] |= (1 << (s - 2));
+                row_occupied_mask[row] |= (1 << (seat - 2));
             }
         }
 
-        int totalGroups = 0;
+        int total_groups = 0;
 
         
         
-        for (const auto& entry : rowReservations) {
-            int mask = entry.second;
-            int groupsInThisRow = 0;
+        
+        
+        total_groups += (n - row_occupied_mask.size()) * 2;
+
+        
+        for (const auto& entry : row_occupied_mask) {
+            int occupied_mask = entry.second;
+            int current_row_groups = 0;
 
             
             
             
             
 
-            bool isLeftAvailable = (mask & 15) == 0;
-            bool isMiddleAvailable = (mask & 60) == 0;
-            bool isRightAvailable = (mask & 240) == 0;
+            bool left_block_available = (occupied_mask & 0b00001111) == 0;
+            bool middle_block_available = (occupied_mask & 0b00111100) == 0;
+            bool right_block_available = (occupied_mask & 0b11110000) == 0;
 
             
-            if (isLeftAvailable && isRightAvailable) {
-                groupsInThisRow = 2;
+            
+            
+            if (left_block_available && right_block_available) {
+                current_row_groups = 2;
             } 
             
-            else if (isLeftAvailable || isMiddleAvailable || isRightAvailable) {
-                groupsInThisRow = 1;
+            
+            
+            else if (left_block_available || middle_block_available || right_block_available) {
+                current_row_groups = 1;
             }
             
-
-            totalGroups += groupsInThisRow;
+            
+            total_groups += current_row_groups;
         }
 
-        
-        
-        
-        totalGroups += (n - rowReservations.size()) * 2;
-
-        return totalGroups;
+        return total_groups;
     }
 };
