@@ -1,67 +1,51 @@
 // Problem: Sum Game
 // Difficulty: MEDIUM
 // Link: https://leetcode.com/problems/sum-game/
-// Approach: Calculate the sum difference `diff_s = sum(first half digits) - sum(second half digits)` and the question mark count difference `diff_q = count(first half '?') - count(second half '?')`. If `diff_q` is odd, Alice wins. If `diff_q` is even, Bob wins if and only if `diff_s + diff_q * 9 / 2` is zero, otherwise Alice wins.
+// Approach: Calculate the initial difference between the sums of digits in the first and second halves, and the difference in the count of question marks between the two halves. Based on these differences, determine the final sum difference assuming optimal play: if the question mark count difference is positive, Alice adds to the sum; if negative, Bob reduces the sum. Bob wins if this final sum difference is zero, otherwise Alice wins.
 
 class Solution {
 public:
     bool sumGame(string num) {
+        long long sumL = 0;
+        long long sumR = 0;
+        int qL = 0;
+        int qR = 0;
         int n = num.length();
-        int sum1 = 0;
-        int q1 = 0;
-        int sum2 = 0;
-        int q2 = 0;
 
         for (int i = 0; i < n / 2; ++i) {
             if (num[i] == '?') {
-                q1++;
+                qL++;
             } else {
-                sum1 += (num[i] - '0');
+                sumL += num[i] - '0';
             }
         }
 
         for (int i = n / 2; i < n; ++i) {
             if (num[i] == '?') {
-                q2++;
+                qR++;
             } else {
-                sum2 += (num[i] - '0');
+                sumR += num[i] - '0';
             }
         }
 
-        int initial_diff = sum1 - sum2;
-        int q_diff = q1 - q2;
+        long long diff = sumL - sumR;
+        int q_diff = qL - qR;
 
         
         
         
-        
-        
-        
-        
-        if (q_diff == 0) {
-            return initial_diff != 0; 
+        if (q_diff % 2 != 0) {
+            return true; 
         }
         
         
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        return (2 * initial_diff + q_diff * 9) != 0;
+        if (diff + (q_diff / 2) * 9 == 0) {
+            return false; 
+        } else {
+            return true; 
+        }
     }
 };
