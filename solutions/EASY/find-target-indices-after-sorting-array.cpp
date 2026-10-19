@@ -1,7 +1,7 @@
 // Problem: Find Target Indices After Sorting Array
 // Difficulty: EASY
 // Link: https://leetcode.com/problems/find-target-indices-after-sorting-array/
-// Approach: Sort the input array, then iterate through the sorted array, collecting all indices where the element matches the target.
+// Approach: Sort the array in non-decreasing order, then iterate through the sorted array to collect all indices where the element matches the target.
 
 class Solution {
 public:
