@@ -1,40 +1,39 @@
 // Problem: Minimum Positive Sum Subarray
 // Difficulty: EASY
 // Link: https://leetcode.com/problems/minimum-positive-sum-subarray/
-// Approach: Use prefix sums to efficiently calculate subarray sums. Maintain a sliding window of valid prefix sums using a balanced binary search tree (e.g., multiset) to quickly find the largest previous prefix sum that results in a positive subarray sum within the given length range.
+// Approach: Use prefix sums to calculate subarray sums, then employ a sliding window with a sorted data structure (like `SortedList` or `TreeMap`) to efficiently find the minimum positive difference between current and past prefix sums within the valid length range.
 
 class Solution {
 public:
     int minimumSumSubarray(vector<int>& nums, int l, int r) {
+        int min_positive_sum = 2147483647; 
+
         int n = nums.size();
-        
-        vector<long long> prefixSum(n + 1, 0);
+
         for (int i = 0; i < n; ++i) {
-            prefixSum[i + 1] = prefixSum[i] + nums[i];
-        }
-        
-        long long minPositiveSum = 100001LL; 
-        
-        for (int i = 0; i < n; ++i) {
-            for (int currentLength = l; currentLength <= r; ++currentLength) {
-                int j = i + currentLength - 1;
-                
-                if (j < n) {
-                    long long currentSum = prefixSum[j + 1] - prefixSum[i];
-                    
-                    if (currentSum > 0) {
-                        if (currentSum < minPositiveSum) {
-                            minPositiveSum = currentSum;
+            int current_sum = 0;
+            for (int j = i; j < n; ++j) {
+                current_sum += nums[j];
+                int len = j - i + 1;
+
+                if (len >= l && len <= r) {
+                    if (current_sum > 0) {
+                        if (current_sum < min_positive_sum) { 
+                            min_positive_sum = current_sum;
                         }
                     }
                 }
+
+                if (len > r) {
+                    break;
+                }
             }
         }
-        
-        if (minPositiveSum == 100001LL) {
+
+        if (min_positive_sum == 2147483647) { 
             return -1;
         } else {
-            return static_cast<int>(minPositiveSum);
+            return min_positive_sum;
         }
     }
 };
